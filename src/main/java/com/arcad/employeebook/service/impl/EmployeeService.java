@@ -12,6 +12,7 @@ public interface EmployeeService {
             throws EmployeeAlreadyAddedException;
 
     List<Employee> EmployeeAll();
-    List<Employee> EmployeeByIDDep(String idd);
+
+    List<Employee> employeeByIDDep(String idd);
 
 }

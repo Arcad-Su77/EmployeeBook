@@ -64,6 +64,7 @@ public class DepartmentController {
     public String maxSalary(@PathVariable String depID) {
         String result;
         result = departmentService.maxSalary(depID);
+        return viewService.viewOut("Максимальная зарплата", result);
 
     }
 }

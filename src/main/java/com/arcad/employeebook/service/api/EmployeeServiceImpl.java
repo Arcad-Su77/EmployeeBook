@@ -99,7 +99,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> EmployeeByIDDep(String idd) {
+    public List<Employee> employeeByIDDep(String idd) {
         List<Employee> collect = employees.values().stream()
                 .filter(employee -> (employee.getDepartmentID().equals(Integer.parseInt(idd)) | idd.equals("0")))
                 .collect(Collectors.toList());

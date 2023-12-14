@@ -1,7 +1,7 @@
 package com.arcad.employeebook.service.api;
 
 import com.arcad.employeebook.elementaryClasses.Employee;
-import com.arcad.employeebook.service.exception.EmployeeAlreadyAddedException;
+import com.arcad.employeebook.exception.EmployeeAlreadyAddedException;
 import com.arcad.employeebook.service.impl.DepartmentService;
 import com.arcad.employeebook.service.impl.EmployeeService;
 import org.springframework.stereotype.Repository;
@@ -84,6 +84,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 //        return result;
     }
 
+
     @Override
     public String addEmploeey(List<String> args) throws EmployeeAlreadyAddedException {
         String result = "<tr><th>Добавляем сотрудника с параметрами</th></tr>";
@@ -99,9 +100,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> employeeByIDDep(String idd) {
+    public List<Employee> employeeByIDDep(int idd) {
         List<Employee> collect = employees.values().stream()
-                .filter(employee -> (employee.getDepartmentID().equals(Integer.parseInt(idd)) | idd.equals("0")))
+                .filter(employee -> ((employee.getDepartmentID() == idd) | (idd == 0)))
                 .collect(Collectors.toList());
         return collect;
     }

@@ -57,7 +57,7 @@ public class EmployeeController {
 //    @RequestParam("num1") String num1, @RequestParam("num2") String num2
     public String printAllEmployee() {
         List<Employee> result = employeeService.EmployeeAll();    //Список сотрудников
-        return viewService.viewOutTable("Список всех сотрудников", result);
+        return viewService.viewOutTable("Список всех сотрудников", result.toString());
     }
 
     @GetMapping(path = "/add")

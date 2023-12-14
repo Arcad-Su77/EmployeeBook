@@ -1,7 +1,7 @@
 package com.arcad.employeebook.service.impl;
 
 import com.arcad.employeebook.elementaryClasses.Employee;
-import com.arcad.employeebook.service.exception.EmployeeAlreadyAddedException;
+import com.arcad.employeebook.exception.EmployeeAlreadyAddedException;
 
 import java.util.List;
 
@@ -13,6 +13,6 @@ public interface EmployeeService {
 
     List<Employee> EmployeeAll();
 
-    List<Employee> employeeByIDDep(String idd);
 
+    List<Employee> employeeByIDDep(int idd);
 }

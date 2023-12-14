@@ -2,21 +2,24 @@ package com.arcad.employeebook.service.api;
 
 import com.arcad.employeebook.elementaryClasses.Department;
 import com.arcad.employeebook.elementaryClasses.Employee;
-import com.arcad.employeebook.service.exception.EmployeeAlreadyAddedException;
+import com.arcad.employeebook.exception.DepartmentAlreadyAddedException;
+import com.arcad.employeebook.exception.InputArgsErrorException;
 import com.arcad.employeebook.service.impl.DepartmentService;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-//@Service
+@Service
 @Repository
 public class DepartmentServiceImpl implements DepartmentService {
     private Map<Integer, Department> departments;
     private final EmployeeServiceImpl employeService;
 
 
-    public DepartmentServiceImpl( EmployeeServiceImpl employeService) {
+    public DepartmentServiceImpl(EmployeeServiceImpl employeService) {
         this.employeService = employeService;
     }
 
@@ -30,52 +33,51 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public List<Department> printAllDepartment(String idd) {
-        String result="<tr><th>ID</th><th>Оклад отдела</th><th>Наименование отдела</th></tr>";
-        if (idd.equals("0")) {
-            for (Map.Entry<Integer, Department> depMap : departments.entrySet()) {
-                if (depMap != null) {
-                    result += "<tr><td>" + depMap.getValue().getDepartmentID() +
-                            "</td><td>" + depMap.getValue().getSalary() +
-                            "</td><td>" + depMap.getValue().getName() + "</td></tr>";
-                }
-            }
-        } else {
-            result += employeService.employeeByIDDep(idd);
-            }
+    public List<Department> allDepartment() {
+        return departments.values().stream()
+                .toList();
+    }
 
-        return result;
+    /**
+     * @param idd - номер департамента
+     * @return Возвращать всех сотрудников по отделу.
+     */
+    @Override
+    public List<Employee> employeeByDepartment(int idd) {
+        return employeService.employeeByIDDep(idd);
     }
 
     /**
      * @param name
      * @param salary
-     * @return
+     * @return Добавление нового департамента.
      */
     @Override
-    public String addDepartment(String name, String salary) {
-        String result="<tr><th>ID</th><th>Оклад отдела</th><th>Наименование отдела</th></tr>";
+    public Department addDepartment(String name, String salary)
+            throws InputArgsErrorException, DepartmentAlreadyAddedException {
+        Department result;
         Double doSalary = Double.valueOf(salary);
 
-        if (name.isEmpty() && (salary.isEmpty() || doSalary.isNaN())) {
-            result += "<tr><td>" + "Параметры не верные" +
-                    "</td><td>" + salary +
-                    "</td><td>" + name + "</td></tr>";
-        } else {
+        if (name.isEmpty() && (salary.isEmpty() || doSalary.isNaN()))
+            throw new InputArgsErrorException("Входные данные для добавления нового департамента не верные");
+        else {
             Department addNew = new Department(name, doSalary);
-            Department depNew = departments.putIfAbsent(addNew.hashCode(), addNew);
+            Department depNew = departments.putIfAbsent(addNew.getDepartmentID(), addNew);
             if (depNew == null) {
-                result += "<tr><td>" + addNew.getDepartmentID() +
-                                "</td><td>" + addNew.getSalary() +
-                                "</td><td>" + addNew.getName() + "</td></tr>";
+                result = addNew;
             } else {
                 Department.decCount();
-                throw new EmployeeAlreadyAddedException("Такой отдел уже добавлен!!! \n" + addNew);
+                throw new DepartmentAlreadyAddedException("Такой отдел уже добавлен!!! \n" + addNew);
             }
         }
         return result;
     }
 
+    /**
+     * @param departmentID
+     * @return Возвращается весь департамент
+     * на основе его номера
+     */
     @Override
     public Department getDepartment(Integer departmentID) {
         return departments.values().stream()
@@ -83,14 +85,56 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .findFirst().get();
     }
 
+    /**
+     * @param depID
+     * @return Возвращать сотрудника с максимальной зарплатой
+     * на основе номера отдела.
+     */
     @Override
-    public String maxSalary(String depID) {
+    public String maxSalary(int depID) {
         List<Employee> empOfDep = employeService.employeeByIDDep(depID);
-        double maxSalary = empOfDep.stream()
-                .mapToDouble(Employee::getSalary)
-                .max()
-                .orElse(0);
-        return departments.get(depID).getName() + ": " + maxSalary;
+        Employee empMaxSalary = empOfDep.stream()
+                .max(Comparator.comparing(Employee::getSalary))
+                .orElse(null);
+        return departments.get(depID).getName() + ": "
+                + empMaxSalary.getEmployeeFIO() + " с максимальной зарплатой: "
+                + empMaxSalary.getSalary();
+    }
+
+    /**
+     * @param depID
+     * @return Возвращать сотрудника с минимальной зарплатой
+     * на основе номера отдела.
+     */
+    @Override
+    public String minSalary(int depID) {
+        List<Employee> empOfDep = employeService.employeeByIDDep(depID);
+        Employee empMinSalary = empOfDep.stream()
+                .max(Comparator.comparing(Employee::getSalary))
+                .orElse(null);
+        return departments.get(depID).getName() + ": "
+                + empMinSalary.getEmployeeFIO() + " с минимальной зарплатой: "
+                + empMinSalary.getSalary();
+    }
+
+    /**
+     * @return Возвращать всех сотрудников по всем отделам.
+     */
+    @Override
+    public String allEmplByDep() {
+        List<Department> deps = allDepartment();
+        StringBuilder result = new StringBuilder();
+        for (Department dep : deps) {
+            List<Employee> emps = employeService.employeeByIDDep(dep.getDepartmentID());
+            emps.sort(Comparator.comparing(Employee::getLastName));
+            result.append(dep.getName()).append(": ");
+            for (Employee emp : emps) {
+                result.append(emp.getEmployeeFIO()).append(", ");
+            }
+            result.delete(result.length() - 2, result.length());
+            result.append("\n");
+        }
+        return result.toString();
     }
 
 }

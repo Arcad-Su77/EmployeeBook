@@ -6,24 +6,26 @@ import com.arcad.employeebook.exception.DepartmentAlreadyAddedException;
 import com.arcad.employeebook.exception.InputArgsErrorException;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DepartmentService {
-    List<Department> allDepartment();
 
-    List<Employee> employeeByDepartment(int idd);
+    List<Department> allDepartment();
 
     /**
      * @param name   Название отдела
      * @param salary Голый оклад по отделу
      * @return Добавляет новый отдел и возвращает краткий отчет по новой записи
      */
-    Department addDepartment(String name, String salary) throws InputArgsErrorException, DepartmentAlreadyAddedException;
+
+    Department addDepartment(String name, Integer salary)
+            throws DepartmentAlreadyAddedException;
 
     Department getDepartment(Integer departmentID);
 
-    String maxSalary(int depID);
+    void editDepartment(Integer inID, String name, Integer salary);
 
-    String minSalary(int depID);
+    void editDepartment(Integer inID, String name);
 
-    String allEmplByDep();
+    void editDepartment(Integer inID, Integer salary);
 }

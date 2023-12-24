@@ -15,4 +15,12 @@ public interface EmployeeService {
 
 
     List<Employee> employeeByIDDep(int idd);
+
+    Employee editEmployee(Integer inID, String firstName, String lastName,
+                          String midleName, Float scaleRatio);
+
+    Employee editEmployee(Integer inID,
+                      String firstName, String lastName, String midleName);
+
+    Employee editEmployee(Integer inID, Float scaleRatio);
 }

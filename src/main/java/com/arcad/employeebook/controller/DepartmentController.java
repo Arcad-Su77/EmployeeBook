@@ -1,27 +1,37 @@
 package com.arcad.employeebook.controller;
 
+import com.arcad.employeebook.elementaryClasses.Employee;
 import com.arcad.employeebook.exception.DepartmentAlreadyAddedException;
 import com.arcad.employeebook.exception.InputArgsErrorException;
 import com.arcad.employeebook.service.api.DepartmentServiceImpl;
+import com.arcad.employeebook.service.api.EmployeeBookService;
 import com.arcad.employeebook.service.api.EmployeeBookUtilite;
+import com.arcad.employeebook.service.impl.DepartmentService;
 import com.arcad.employeebook.view.ViewService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/Department")
+@RequestMapping("/department")
 public class DepartmentController {
 
     private final ViewService viewService;
-    private final DepartmentServiceImpl departmentService;
+    private final EmployeeBookService employeeBookService;
     private final EmployeeBookUtilite employeeBookUtilite;
+    private final DepartmentService departmentService;
 
-    public DepartmentController(ViewService viewService, DepartmentServiceImpl departmentService, EmployeeBookUtilite employeeBookUtilite) {
+    public DepartmentController(ViewService viewService,
+                                EmployeeBookService employeeBookService,
+                                EmployeeBookUtilite employeeBookUtilite,
+                                DepartmentService departmentService) {
         this.viewService = viewService;
-        this.departmentService = departmentService;
+        this.employeeBookService = employeeBookService;
         this.employeeBookUtilite = employeeBookUtilite;
+        this.departmentService = departmentService;
     }
 
     @GetMapping(path = "/all")
@@ -34,10 +44,9 @@ public class DepartmentController {
      */
     @GetMapping(path = "/all/employee")
     public String printEmplByDep() {
-        String result;
-        result = String.valueOf(departmentService.
-                    allEmplByDep());
-        return viewService.viewOut("Список сотрудников по отделам", result);
+        Map<Integer, List<Employee>> allEmplByDep = new HashMap<>();
+        allEmplByDep = employeeBookService.allEmplByDep();
+        return viewService.viewOut("Список сотрудников по отделам", allEmplByDep.toString());
     }
     /**
      * @param idd
@@ -48,7 +57,7 @@ public class DepartmentController {
         String result;
         EmployeeBookUtilite ebUtilite = new EmployeeBookUtilite();
         if (ebUtilite.isReqParamNum(Collections.singletonList(idd))) {
-            result = String.valueOf(departmentService.
+            result = String.valueOf(employeeBookService.
                     employeeByDepartment(Integer.parseInt(idd)));
         } else {
             result = "Двнные не вернве";
@@ -66,14 +75,14 @@ public class DepartmentController {
     @GetMapping(path = "/add")
     public String addDepartment(@RequestParam("name") String name,
                                 @RequestParam("salary") String salary)
-            throws InputArgsErrorException, DepartmentAlreadyAddedException {
+            throws DepartmentAlreadyAddedException {
         String result;
         List<String> argsString = new java.util.ArrayList<>(List.of(name));
         List<String> argsNumb = List.of(salary);
         if (employeeBookUtilite.isReqParamString(argsString) &
                 employeeBookUtilite.isReqParamNum(argsNumb)) {
             argsString.addAll(argsNumb);
-            result = String.valueOf(departmentService.addDepartment(name, salary));    //Список сотрудников
+            result = String.valueOf(departmentService.addDepartment(name, Integer.valueOf(salary)));    //Список сотрудников
         } else {
             argsString.addAll(argsNumb);
             result = "<tr><td> Введены не верные данные </td></tr>" +
@@ -89,9 +98,10 @@ public class DepartmentController {
      */
     @GetMapping(path = "/max-salary/{depID}")
     public String maxSalary(@PathVariable String depID) {
-        String result;
-        result = departmentService.maxSalary(Integer.parseInt(depID));
-        return viewService.viewOut("Максимальная зарплата", result);
+        Employee result;
+        result = employeeBookService.maxSalary(Integer.parseInt(depID));
+        return viewService.viewOut("Максимальная зарплата",
+                employeeBookService.employeeToString(result));
 
     }
 
@@ -102,9 +112,10 @@ public class DepartmentController {
      */
     @GetMapping(path = "/min-salary/{depID}")
     public String minSalary(@PathVariable String depID) {
-        String result;
-        result = departmentService.minSalary(Integer.parseInt(depID));
-        return viewService.viewOut("Минимальная зарплата", result);
+        Employee result;
+        result = employeeBookService.minSalary(Integer.parseInt(depID));
+        return viewService.viewOut("Минимальная зарплата",
+                employeeBookService.employeeToString(result));
 
     }
 }

@@ -1,31 +1,25 @@
 package com.arcad.employeebook.service.api;
 
 import com.arcad.employeebook.elementaryClasses.Department;
-import com.arcad.employeebook.elementaryClasses.Employee;
 import com.arcad.employeebook.exception.DepartmentAlreadyAddedException;
 import com.arcad.employeebook.exception.InputArgsErrorException;
 import com.arcad.employeebook.service.impl.DepartmentService;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
 @Repository
 public class DepartmentServiceImpl implements DepartmentService {
     private Map<Integer, Department> departments;
-    private final EmployeeServiceImpl employeService;
 
-
-    public DepartmentServiceImpl(EmployeeServiceImpl employeService) {
-        this.employeService = employeService;
+    public DepartmentServiceImpl() {
+        this.departments = new HashMap<>();
     }
 
-    public DepartmentServiceImpl(Map<Integer, Department> dep, EmployeeServiceImpl employeService) {
-        this.departments = dep;
-        this.employeService = employeService;
+    public void setDepartments(Map<Integer, Department> departments) {
+        this.departments = departments;
     }
 
     public Map<Integer, Department> getDepartments() {
@@ -39,30 +33,33 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     /**
-     * @param idd - номер департамента
-     * @return Возвращать всех сотрудников по отделу.
-     */
-    @Override
-    public List<Employee> employeeByDepartment(int idd) {
-        return employeService.employeeByIDDep(idd);
-    }
-
-    /**
-     * @param name
-     * @param salary
+     * @param name Название отдела
+     * @param salary Голый оклад
      * @return Добавление нового департамента.
      */
     @Override
-    public Department addDepartment(String name, String salary)
-            throws InputArgsErrorException, DepartmentAlreadyAddedException {
+    public Department addDepartment(String name, Integer salary)
+            throws DepartmentAlreadyAddedException {
         Department result;
-        Double doSalary = Double.valueOf(salary);
+        Department addNew = new Department(name, salary);
+        Department depNew = null;
+        if (!departments.containsValue(addNew)) {
+            depNew = departments.putIfAbsent(addNew.getDepartmentID(), addNew);
+            result = addNew;
+        } else {
+            Department.decCount();
+            throw new DepartmentAlreadyAddedException("Такой отдел уже добавлен!!! \n" + addNew);
+        }
+        return result;
+    }
 
-        if (name.isEmpty() && (salary.isEmpty() || doSalary.isNaN()))
-            throw new InputArgsErrorException("Входные данные для добавления нового департамента не верные");
+    public Department addDepartment(Department addNew) throws InputArgsErrorException, DepartmentAlreadyAddedException {
+        Department result;
+        if (addNew == null)
+            throw new InputArgsErrorException("Департамент для добавления нового департамента не верные");
         else {
-            Department addNew = new Department(name, doSalary);
-            Department depNew = departments.putIfAbsent(addNew.getDepartmentID(), addNew);
+            Department depNew;
+            depNew = departments.putIfAbsent(addNew.getDepartmentID(), addNew);
             if (depNew == null) {
                 result = addNew;
             } else {
@@ -84,57 +81,18 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .filter(department -> (department.getDepartmentID() == departmentID))
                 .findFirst().get();
     }
-
-    /**
-     * @param depID
-     * @return Возвращать сотрудника с максимальной зарплатой
-     * на основе номера отдела.
-     */
     @Override
-    public String maxSalary(int depID) {
-        List<Employee> empOfDep = employeService.employeeByIDDep(depID);
-        Employee empMaxSalary = empOfDep.stream()
-                .max(Comparator.comparing(Employee::getSalary))
-                .orElse(null);
-        return departments.get(depID).getName() + ": "
-                + empMaxSalary.getEmployeeFIO() + " с максимальной зарплатой: "
-                + empMaxSalary.getSalary();
+    public void editDepartment(Integer inID,String name,Integer salary) {
+        if (name != null) departments.get(inID).setName(name);
+        if (salary != null) departments.get(inID).setSalary(salary);
     }
-
-    /**
-     * @param depID
-     * @return Возвращать сотрудника с минимальной зарплатой
-     * на основе номера отдела.
-     */
     @Override
-    public String minSalary(int depID) {
-        List<Employee> empOfDep = employeService.employeeByIDDep(depID);
-        Employee empMinSalary = empOfDep.stream()
-                .max(Comparator.comparing(Employee::getSalary))
-                .orElse(null);
-        return departments.get(depID).getName() + ": "
-                + empMinSalary.getEmployeeFIO() + " с минимальной зарплатой: "
-                + empMinSalary.getSalary();
+    public void editDepartment(Integer inID,String name){
+        editDepartment(inID,name,null);
     }
-
-    /**
-     * @return Возвращать всех сотрудников по всем отделам.
-     */
     @Override
-    public String allEmplByDep() {
-        List<Department> deps = allDepartment();
-        StringBuilder result = new StringBuilder();
-        for (Department dep : deps) {
-            List<Employee> emps = employeService.employeeByIDDep(dep.getDepartmentID());
-            emps.sort(Comparator.comparing(Employee::getLastName));
-            result.append(dep.getName()).append(": ");
-            for (Employee emp : emps) {
-                result.append(emp.getEmployeeFIO()).append(", ");
-            }
-            result.delete(result.length() - 2, result.length());
-            result.append("\n");
-        }
-        return result.toString();
+    public void editDepartment(Integer inID,Integer salary){
+        editDepartment(inID,null,salary);
     }
 
 }

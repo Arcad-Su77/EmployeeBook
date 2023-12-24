@@ -109,7 +109,4 @@ public class Employee {
         return Objects.hash(firstName, lastName, midleName);
     }
 
-    public double getSalary() {
-        return scaleRatio * size;
-    }
 }

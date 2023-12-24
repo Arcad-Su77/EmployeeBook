@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Employee")
+@RequestMapping("/employee")
 public class EmployeeController {
     private final EmployeeService employeeService;
     private final ViewService viewService;
@@ -24,35 +24,7 @@ public class EmployeeController {
         this.viewService = viewService;
         this.employeeBookUtilite = employeeBookUtilite;
     }
-//
-//     switch ((MENU_ROUTER +taskNumberRun)) {
-//        case 0 -> EXIT = false;
-//        case 1 -> employeeBook.printAllEmployee();    //Список сотрудников
-//        case 2 -> System.out.println("Сумма затрат на зарплату: "  + employeeBook.getSumSalary());
-//        case 3 -> System.out.println("Сотрудник с минимальной зарплатой: " +
-//                employeeBook.getEmployee(employeeBook.findEmployeeMiniSalary()));
-//        case 4 -> System.out.println("Сотрудник с средней зарплатой: " +
-//                employeeBook.getEmployee(employeeBook.findEmployeeMidleSalary()));
-//        case 5 -> System.out.println("Сотрудник с максимальной зарплатой: " +
-//                employeeBook.getEmployee(employeeBook.findEmployeeMaxiSalary()));
-//        case 6 -> System.out.println("Средня зарплата сотрудников: " + employeeBook.getSumSalary() / Employee.getCount());
-//        case 7 -> menuRoute(7);
-//        case 8 -> employeeBook.printAllDepartment();
-//        case 9 -> employeeBook.editDepartment(scan);
-//        case 10 -> employeeBook.printAllEmployee();
-//        case 11 -> employeeBook.editEmployee(scan);
-//        case 12 -> employeeBook.printAllDepartment();
-//        case 13 -> employeeBook.editDepartment(scan);
-//        default -> System.out.println("Вы не выбрали задание [1-0]1: " + taskNumberRun);
-//    }
-//                if (MENU_ROUTER == 0)
-//            if (EXIT) {
-//        System.out.println("\n=====================\nДля выхода в меню введите любой символ.");
-//        scan.nextLine();
-//    } else {
-//        System.out.println("\n=====================\nСпасибо за использование нашего продукта.\n==============");
-//    }
-//
+
     @GetMapping(path = "/printAll")
 //    @RequestParam("num1") String num1, @RequestParam("num2") String num2
     public String printAllEmployee() {

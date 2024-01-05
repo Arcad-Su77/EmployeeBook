@@ -38,13 +38,11 @@ public class DepartmentServiceImpl implements DepartmentService {
      * @return Добавление нового департамента.
      */
     @Override
-    public Department addDepartment(String name, Integer salary)
-            throws DepartmentAlreadyAddedException {
+    public Department addDepartment(String name, double salary) throws DepartmentAlreadyAddedException {
         Department result;
         Department addNew = new Department(name, salary);
-        Department depNew = null;
         if (!departments.containsValue(addNew)) {
-            depNew = departments.putIfAbsent(addNew.getDepartmentID(), addNew);
+            departments.putIfAbsent(addNew.getDepartmentID(), addNew);
             result = addNew;
         } else {
             Department.decCount();
@@ -82,7 +80,10 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .findFirst().get();
     }
     @Override
-    public void editDepartment(Integer inID,String name,Integer salary) {
+    public void editDepartment(Integer inID,String name,Double salary) {
+        if (!departments.containsKey(inID)) {
+            throw new IllegalArgumentException("Department with ID " + inID + " does not exist");
+        }
         if (name != null) departments.get(inID).setName(name);
         if (salary != null) departments.get(inID).setSalary(salary);
     }
@@ -91,7 +92,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         editDepartment(inID,name,null);
     }
     @Override
-    public void editDepartment(Integer inID,Integer salary){
+    public void editDepartment(Integer inID,double salary){
         editDepartment(inID,null,salary);
     }
 

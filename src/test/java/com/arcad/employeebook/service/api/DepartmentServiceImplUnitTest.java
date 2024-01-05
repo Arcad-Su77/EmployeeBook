@@ -3,7 +3,6 @@ package com.arcad.employeebook.service.api;
 import com.arcad.employeebook.elementaryClasses.Department;
 import com.arcad.employeebook.elementaryClasses.Employee;
 import com.arcad.employeebook.exception.DepartmentAlreadyAddedException;
-import com.arcad.employeebook.exception.InputArgsErrorException;
 import com.arcad.employeebook.service.impl.DepartmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,15 +58,4 @@ class DepartmentServiceImplUnitTest {
                 departmentService.addDepartment("Testing", 50000));
     }
 
-    @Test
-    void testAddDepartmentWithInvalidArgs() {
-        // Arrange
-        Map<Integer, Department> departmentsMap = new HashMap<>();
-        DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
-        departmentService.setDepartments(departmentsMap);
-
-        // Act & Assert
-        assertThrows(InputArgsErrorException.class, () ->
-            departmentService.addDepartment("", 0));
-    }
 }

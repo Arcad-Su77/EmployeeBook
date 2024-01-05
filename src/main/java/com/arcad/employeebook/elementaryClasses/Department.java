@@ -36,7 +36,7 @@ public class Department {
 
     public int getDepartmentID() { return departmentID; }
 
-    public void setSalary(int payment) {
+    public void setSalary(double payment) {
         this.salary = payment;
     }
 

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.Math.abs;
 import static java.util.Comparator.comparing;
 
 @Service
@@ -59,14 +58,13 @@ public class EmployeeBookService {
     public double getSalary(Employee emp){
         double scRatio = employeeService.getEmployee(emp.getEmployeeID()).getScaleRatio();
         double salary = departmentService.getDepartment(emp.getDepartmentID()).getSalary();
-        return salary *= scRatio;
+        return salary * scRatio;
     }
     public double getSumSalary() {
         return employeeService.EmployeeAll().stream()
-                .mapToDouble(employee -> getSalary(employee))
+                .mapToDouble(this::getSalary)
                 .reduce(0.0, Double::sum);
     }
-
 
     /**
      * @param idd - номер департамента
@@ -83,7 +81,7 @@ public class EmployeeBookService {
      */
     public Employee maxSalary(int depID) {
         return employeeByDepartment(depID).stream()
-                .max(comparing(employee -> getSalary(employee)))
+                .max(comparing(this::getSalary))
                 .orElse(null);
     }
 
@@ -94,7 +92,7 @@ public class EmployeeBookService {
      */
     public Employee minSalary(int depID) {
         return employeeByDepartment(depID).stream()
-                .min(comparing(employee -> getSalary(employee)))
+                .min(comparing(this::getSalary))
                 .orElse(null);
     }
 
@@ -112,51 +110,5 @@ public class EmployeeBookService {
     public String employeeToString(Employee emp) {
         return emp.getEmployeeShortFIO() + ", Отдел:" + departmentService.getDepartment(emp.getDepartmentIndexID()).getName() + ", Зарплата: " + getSalary(emp);
     }
-//    public Employee findEmployeeMiniSalary() {
-//        Employee retEmployee;
-//        // MINI_SALARY
-//        setMiniSalary(getSalary(employees.get(1)));
-//        retEmployee = employees.get(1);
-//        for (Map.Entry<Integer, Employee> empMap : employees.entrySet()) {
-//            if (empMap != null) {
-//                double empFor = getSalary(empMap.getValue());
-//                if (empFor < getMiniSalary()) {
-//                    setMiniSalary(empFor);
-//                    retEmployee = empMap.getValue();
-//                }
-//            }
-//        }
-//        return retEmployee;
-//    }
-//    public Employee findEmployeeMaxiSalary() { // MAXI_SALARY
-//        Employee retEmployee;
-//        setMaxiSalary(getSalary(employees.get(1)));
-//        retEmployee = employees.get(1);
-//        for (Map.Entry<Integer, Employee> empMap : employees.entrySet()) {
-//            if (empMap != null) {
-//                double empFor = getSalary(empMap.getValue());
-//                if (empFor > getMaxiSalary()) {
-//                    setMaxiSalary(empFor);
-//                    retEmployee = empMap.getValue();
-//                }
-//            }
-//        }
-//        return retEmployee;
-//    }
-//    public Employee findEmployeeMidleSalary() { // MIDLE_SALARY
-//        Employee retEmployee = null;
-//        setMidleSalary(getSumSalary() / Employee.getCount());
-//        double delta = abs(getMidleSalary() - getSalary(employees.get(0)));
-//        for (Map.Entry<Integer, Employee> empMap : employees.entrySet()) {
-//            if (empMap != null) {
-//                double empFor = abs(getMidleSalary() - getSalary(empMap.getValue()));
-//                if (empFor < delta) {
-//                    delta = empFor;
-//                    retEmployee = empMap.getValue();
-//                }
-//            }
-//        }
-//        return retEmployee;
-//    }
 
 }

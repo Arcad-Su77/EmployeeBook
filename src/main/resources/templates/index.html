@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Employee Book</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <h1>Employee Book</h1>
+    <p>Menu</p>
+    <p>{$menu_0}</p>
+
+    <div class="">
+        <h2>Сотрудниуи</h2>
+        <form action="/Employee/printAll" method="get">
+            <label>
+                Вывести полный список сотрудников.
+            </label>
+            <button type="submit">Вывести</button>
+        </form>
+    </div>
+    <div class="">
+        <h4>Добавляем сотрудника</h4>
+        <form action="/Employee/add" method="get">
+            <label>
+                <input name="firstName" type="text" placeholder="Фамилия">
+                <input name="lastName" type="text" placeholder="Имя">
+                <input name="midleName" type="text" placeholder="Отчество">
+            <br>
+                <input name="departmentID" type="text" placeholder="Отдел">
+                <input name="scaleRatio" type="text" placeholder="Коэффициент ставки оклада">
+            </label>
+            <br>
+            <button type="submit">Добавить</button>
+        </form>
+    </div>
+    <div class="">
+        <h4>Департамент</h4>
+        <form action="/Department/printAll" method="get">
+            <label>
+                Вывести список всех Департаментов.
+            </label>
+            <button type="submit">Вывести</button>
+        </form>
+    </div>
+    <div class="">
+        <h3>Добавить департамент</h3>
+        <form action="/Department/add" method="get">
+            <label>
+                <input name="name" type="text" placeholder="Наименование департамента">
+                <input name="salary" type="text" placeholder="Оклад отдела">
+            </label>
+            <button type="submit">Добавить</button>
+        </form>
+    </div>
+    <div id="Login" class="">
+        <h3>Login input</h3>
+        <form action="/login" method="get">
+            <label>
+                <input name="login" type="text" placeholder="Ваш логин">
+                <input name="password" type="password" placeholder="Ваш пароль">
+                <input name="confirmPassword" type="password" placeholder="Проверочный пароль">
+            </label>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>
